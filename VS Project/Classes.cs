@@ -1,6 +1,4 @@
 ﻿// Flight classes
-using System.Data;
-
 abstract class Flight {
     protected string flightNumber { get; set; }
     protected string origin { get; set; }
@@ -118,6 +116,33 @@ class CFFTFlight : Flight {
 }
 
 // Airline class
+class Airline {
+    string name { get; set; }
+    string code { get; set; }
+    Dictionary<string, Flight> flights { get; set; } = new();
+    
+    public Airline(string name, string code, Dictionary<string, Flight> flights) {
+        this.name = name;
+        this.code = code;
+        this.flights = flights;
+    }
+
+    public bool AddFlight(Flight flight) {
+        throw new NotImplementedException();
+    }
+
+    public bool RemoveFlight(Flight flight) {
+        throw new NotImplementedException();
+    }
+
+    public double CalculateFees() {
+        throw new NotImplementedException();
+    }
+
+    public override string ToString() {
+        throw new NotImplementedException();
+    }
+}
 
 // BoardingGate class
 

@@ -1,4 +1,6 @@
 ﻿// Flight classes
+using System.Data;
+
 abstract class Flight {
     protected string flightNumber { get; set; }
     protected string origin { get; set; }
@@ -14,19 +16,7 @@ abstract class Flight {
         this.status = status;
     }
 
-    public abstract double CalculateFees();
-
-    public override string ToString() {
-        throw new NotImplementedException();
-    }
-}
-
-// Inherited flights
-class NORMFlight : Flight {
-    public NORMFlight(string flightNumber, string origin, string destination, DateTime expectedTime, string status)
-        : base(flightNumber, origin, destination, expectedTime, status) { }
-
-    public override double CalculateFees() {
+    public virtual double CalculateFees() {
         // boarding gate base fee
         double totalCost = 300;
 
@@ -50,7 +40,22 @@ class NORMFlight : Flight {
         if (origin.Contains("DXB") || origin.Contains("BKK") || origin.Contains("NRT")) {
             totalCost -= 25;
         }
-        return totalCost - 50; // for no special req. codes
+        return totalCost;
+    }
+
+    public override string ToString() {
+        throw new NotImplementedException();
+    }
+}
+
+// Inherited flights
+class NORMFlight : Flight {
+    public NORMFlight(string flightNumber, string origin, string destination, DateTime expectedTime, string status)
+        : base(flightNumber, origin, destination, expectedTime, status) { }
+
+    public override double CalculateFees() {
+        double totalCost = base.CalculateFees() - 50; // $50 off for no special codes
+        return totalCost;
     }
 
     public override string ToString() {
@@ -67,30 +72,7 @@ class LWTTFlight : Flight {
     }
 
     public override double CalculateFees() {
-        // boarding gate base fee + LWTT code req.
-        double totalCost = 300 + 500;
-
-        if (origin.Contains("SIN")) {
-            // departing flight -> $800
-            totalCost += 800;
-        }
-        if (destination.Contains("SIN")) {
-            // arriving flight -> $500
-            totalCost += 500;
-        }
-
-        // TODO: check for more than 5 flights (discount of 3% before any deductions below)
-
-        // TODO: check for any 3 flights arriving / departing
-
-        if (expectedTime.CompareTo(new TimeOnly(hour: 11, minute: 0)) < 0 || expectedTime.CompareTo(new TimeOnly(hour: 21, minute: 0)) > 0) {
-            // for flights arriving / departing before 11am or after 9pm
-            totalCost -= 110;
-        }
-        if (origin.Contains("DXB") || origin.Contains("BKK") || origin.Contains("NRT")) {
-            totalCost -= 25;
-        }
-
+        double totalCost = requestFee + base.CalculateFees();
         return totalCost;
     }
 
@@ -108,30 +90,7 @@ class DDJBFlight : Flight {
     }
 
     public override double CalculateFees() {
-        // boarding gate base fee + DDJB code req.
-        double totalCost = 300 + 300;
-
-        if (origin.Contains("SIN")) {
-            // departing flight -> $800
-            totalCost += 800;
-        }
-        if (destination.Contains("SIN")) {
-            // arriving flight -> $500
-            totalCost += 500;
-        }
-
-        // TODO: check for more than 5 flights (discount of 3% before any deductions below)
-
-        // TODO: check for any 3 flights arriving / departing
-
-        if (expectedTime.CompareTo(new TimeOnly(hour: 11, minute: 0)) < 0 || expectedTime.CompareTo(new TimeOnly(hour: 21, minute: 0)) > 0) {
-            // for flights arriving / departing before 11am or after 9pm
-            totalCost -= 110;
-        }
-        if (origin.Contains("DXB") || origin.Contains("BKK") || origin.Contains("NRT")) {
-            totalCost -= 25;
-        }
-
+        double totalCost = requestFee + base.CalculateFees();
         return totalCost;
     }
 
@@ -149,30 +108,7 @@ class CFFTFlight : Flight {
     }
 
     public override double CalculateFees() {
-        // boarding gate base fee + CFFT code req.
-        double totalCost = 300 + 150;
-
-        if (origin.Contains("SIN")) {
-            // departing flight -> $800
-            totalCost += 800;
-        }
-        if (destination.Contains("SIN")) {
-            // arriving flight -> $500
-            totalCost += 500;
-        }
-
-        // TODO: check for more than 5 flights (discount of 3% before any deductions below)
-
-        // TODO: check for any 3 flights arriving / departing
-
-        if (expectedTime.CompareTo(new TimeOnly(hour: 11, minute: 0)) < 0 || expectedTime.CompareTo(new TimeOnly(hour: 21, minute: 0)) > 0) {
-            // for flights arriving / departing before 11am or after 9pm
-            totalCost -= 110;
-        }
-        if (origin.Contains("DXB") || origin.Contains("BKK") || origin.Contains("NRT")) {
-            totalCost -= 25;
-        }
-
+        double totalCost = requestFee + base.CalculateFees();
         return totalCost;
     }
 

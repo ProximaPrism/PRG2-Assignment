@@ -1,10 +1,10 @@
 ﻿// Flight classes
 abstract class Flight {
-    protected string flightNumber { get; set; }
+    public string flightNumber { get; set; }
     protected string origin { get; set; }
     protected string destination { get; set; }
     protected DateTime expectedTime { get; set; }
-    protected string status { get; set; }
+    public string status { get; set; }
 
     public Flight(string flightNumber, string origin, string destination, DateTime expectedTime, string status) {
         this.flightNumber = flightNumber;
@@ -42,7 +42,7 @@ abstract class Flight {
     }
 
     public override string ToString() {
-        throw new NotImplementedException();
+        return $"{flightNumber,-16}{"3"}";
     }
 }
 
@@ -128,11 +128,21 @@ class Airline {
     }
 
     public bool AddFlight(Flight flight) {
-        throw new NotImplementedException();
+        if ((flight.flightNumber).Contains(code)) {
+            flights.Add(flight.flightNumber, flight);
+            return true;
+        }
+        return false;
     }
 
     public bool RemoveFlight(Flight flight) {
-        throw new NotImplementedException();
+        foreach (KeyValuePair<string, Flight> kvp in flights) {
+            if (kvp.Value.flightNumber == flight.flightNumber) {
+                flights.Remove(kvp.Key);
+                return true;
+            }
+        }
+        return false;
     }
 
     public double CalculateFees() {

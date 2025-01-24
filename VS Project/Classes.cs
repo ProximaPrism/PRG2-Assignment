@@ -227,3 +227,4 @@ class Terminal
             Console.WriteLine(gate);
         }
     }
+}

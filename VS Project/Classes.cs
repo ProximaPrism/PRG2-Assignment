@@ -158,9 +158,9 @@ class Airline {
 class BoardingGate
 {
     public string GateName { get; set; }
-    public bool SupportsDDJB { get; set; } // Double-decker jet bridge
-    public bool SupportsCFFT { get; set; } // Connecting flight fast transfer
-    public bool SupportsLWTT { get; set; } // Longer waiting time
+    public bool SupportsDDJB { get; set; }
+    public bool SupportsCFFT { get; set; } 
+    public bool SupportsLWTT { get; set; } 
     public string? AssignedFlightNumber { get; set; } // Null if unassigned
 
     public BoardingGate(string gateName, bool supportsDDJB, bool supportsCFFT, bool supportsLWTT)
@@ -231,7 +231,7 @@ class Terminal
     {
         using StreamReader sr = new StreamReader(filePath);
         string? line;
-        sr.ReadLine(); // Skip header
+        sr.ReadLine();
         while ((line = sr.ReadLine()) != null)
         {
             string[] gateInfo = line.Split(',');

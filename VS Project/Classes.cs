@@ -227,4 +227,20 @@ class Terminal
             Console.WriteLine(gate);
         }
     }
+    public void LoadGatesFromFile(string filePath)
+    {
+        using StreamReader sr = new StreamReader(filePath);
+        string? line;
+        sr.ReadLine(); // Skip header
+        while ((line = sr.ReadLine()) != null)
+        {
+            string[] gateInfo = line.Split(',');
+            string gateName = gateInfo[0];
+            bool supportsDDJB = bool.Parse(gateInfo[1]);
+            bool supportsCFFT = bool.Parse(gateInfo[2]);
+            bool supportsLWTT = bool.Parse(gateInfo[3]);
+
+            AddGate(new BoardingGate(gateName, supportsDDJB, supportsCFFT, supportsLWTT));
+        }
+    }
 }

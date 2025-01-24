@@ -155,5 +155,75 @@ class Airline {
 }
 
 // BoardingGate class
+class BoardingGate
+{
+    public string GateName { get; set; }
+    public bool SupportsDDJB { get; set; } // Double-decker jet bridge
+    public bool SupportsCFFT { get; set; } // Connecting flight fast transfer
+    public bool SupportsLWTT { get; set; } // Longer waiting time
+    public string? AssignedFlightNumber { get; set; } // Null if unassigned
 
+    public BoardingGate(string gateName, bool supportsDDJB, bool supportsCFFT, bool supportsLWTT)
+    {
+        GateName = gateName;
+        SupportsDDJB = supportsDDJB;
+        SupportsCFFT = supportsCFFT;
+        SupportsLWTT = supportsLWTT;
+        AssignedFlightNumber = null;
+    }
+
+    public bool AssignFlight(string flightNumber)
+    {
+        if (AssignedFlightNumber == null)
+        {
+            AssignedFlightNumber = flightNumber;
+            return true;
+        }
+        return false;
+    }
+
+    public void UnassignFlight()
+    {
+        AssignedFlightNumber = null;
+    }
+
+    public override string ToString()
+    {
+        return $"Gate: {GateName}, SupportsDDJB: {SupportsDDJB}, SupportsCFFT: {SupportsCFFT}, SupportsLWTT: {SupportsLWTT}, AssignedFlight: {AssignedFlightNumber ?? "None"}";
+    }
+}
 // Terminal class
+class Terminal
+{
+    public string TerminalName { get; set; }
+    public Dictionary<string, BoardingGate> Gates { get; private set; } = new();
+
+    public Terminal(string terminalName)
+    {
+        TerminalName = terminalName;
+    }
+
+    public void AddGate(BoardingGate gate)
+    {
+        Gates[gate.GateName] = gate;
+    }
+
+    public BoardingGate? GetUnassignedGate(Func<BoardingGate, bool> predicate)
+    {
+        foreach (var gate in Gates.Values)
+        {
+            if (gate.AssignedFlightNumber == null && predicate(gate))
+            {
+                return gate;
+            }
+        }
+        return null;
+    }
+
+    public void ListGates()
+    {
+        foreach (var gate in Gates.Values)
+        {
+            Console.WriteLine(gate);
+        }
+    }

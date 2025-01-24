@@ -188,6 +188,96 @@ static void DisplayFlightSchedule()
 }
 
 // Feature 8
+static void ModifyFlightDetails()
+    {
+        Console.WriteLine("Available Airlines:");
+        foreach (var airline in allAirlinesDict.Values)
+        {
+            Console.WriteLine($"{airline.code}: {airline.name}");
+        }
+
+        Console.Write("Enter Airline Code: ");
+        string airlineCode = Console.ReadLine();
+
+        if (!allAirlinesDict.TryGetValue(airlineCode, out var selectedAirline))
+        {
+            Console.WriteLine("Invalid Airline Code.");
+            return;
+        }
+
+        Console.WriteLine($"Flights for {selectedAirline.name}:");
+        foreach (var flight in selectedAirline.flights.Values)
+        {
+            Console.WriteLine($"{flight.flightNumber}: {flight.origin} -> {flight.destination}");
+        }
+
+        Console.Write("Enter Flight Number to modify or delete: ");
+        string flightNumber = Console.ReadLine();
+
+        if (!selectedAirline.flights.TryGetValue(flightNumber, out var selectedFlight))
+        {
+            Console.WriteLine("Invalid Flight Number.");
+            return;
+        }
+
+        Console.WriteLine("1. Modify Flight\n2. Delete Flight");
+        Console.Write("Choose an option: ");
+        string option = Console.ReadLine();
+
+        if (option == "1")
+        {
+            Console.WriteLine("What would you like to modify?");
+            Console.WriteLine("1. Origin\n2. Destination\n3. Expected Time\n4. Status\n5. Special Request Code");
+            Console.Write("Choose an option: ");
+            string modifyOption = Console.ReadLine();
+
+            switch (modifyOption)
+            {
+                case "1":
+                    Console.Write("Enter new Origin: ");
+                    selectedFlight.origin = Console.ReadLine();
+                    break;
+                case "2":
+                    Console.Write("Enter new Destination: ");
+                    selectedFlight.destination = Console.ReadLine();
+                    break;
+                case "3":
+                    Console.Write("Enter new Expected Time (dd/mm/yyyy hh:mm): ");
+                    selectedFlight.expectedTime = DateTime.Parse(Console.ReadLine());
+                    break;
+                case "4":
+                    Console.Write("Enter new Status: ");
+                    selectedFlight.status = Console.ReadLine();
+                    break;
+                case "5":
+                    Console.Write("Enter new Special Request Code (CFFT/DDJB/LWTT/None): ");
+                    selectedFlight.status = Console.ReadLine();
+                    break;
+                default:
+                    Console.WriteLine("Invalid option.");
+                    return;
+            }
+
+            Console.WriteLine("Flight details updated successfully.");
+        }
+        else if (option == "2")
+        {
+            Console.Write("Are you sure you want to delete this flight? (Y/N): ");
+            if (Console.ReadLine()?.ToUpper() == "Y")
+            {
+                selectedAirline.flights.Remove(flightNumber);
+                Console.WriteLine("Flight deleted successfully.");
+            }
+            else
+            {
+                Console.WriteLine("Deletion cancelled.");
+            }
+        }
+        else
+        {
+            Console.WriteLine("Invalid option.");
+        }
+    }
 
 // Feature 9
 

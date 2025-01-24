@@ -111,15 +111,15 @@ static void ListFlights(Dictionary<string, Flight> allFlightsDict) {
 static void CreateFlight()
     {
         Console.Write("Enter Flight Number: ");
-        string flightNumber = Console.ReadLine() ?? "";
+        string flightNumber = Console.ReadLine();
         Console.Write("Enter Origin: ");
-        string origin = Console.ReadLine() ?? "";
+        string origin = Console.ReadLine();
         Console.Write("Enter Destination: ");
-        string destination = Console.ReadLine() ?? "";
+        string destination = Console.ReadLine();
         Console.Write("Enter Expected Departure/Arrival Time (dd/mm/yyyy hh:mm): ");
-        DateTime expectedTime = DateTime.Parse(Console.ReadLine() ?? "01/01/2000 00:00");
+        DateTime expectedTime = DateTime.Parse(Console.ReadLine());
         Console.Write("Enter Special Request Code (CFFT/DDJB/LWTT/None): ");
-        string specialCode = Console.ReadLine() ?? "None";
+        string specialCode = Console.ReadLine();
 
         Flight flight = specialCode switch
         {

@@ -120,7 +120,7 @@ class Airline {
     string name { get; set; }
     string code { get; set; }
     Dictionary<string, Flight> flights { get; set; } = new();
-    
+
     public Airline(string name, string code, Dictionary<string, Flight> flights) {
         this.name = name;
         this.code = code;
@@ -155,16 +155,14 @@ class Airline {
 }
 
 // BoardingGate class
-class BoardingGate
-{
+class BoardingGate {
     public string GateName { get; set; }
     public bool SupportsDDJB { get; set; }
-    public bool SupportsCFFT { get; set; } 
-    public bool SupportsLWTT { get; set; } 
+    public bool SupportsCFFT { get; set; }
+    public bool SupportsLWTT { get; set; }
     public string? AssignedFlightNumber { get; set; } // Null if unassigned
 
-    public BoardingGate(string gateName, bool supportsDDJB, bool supportsCFFT, bool supportsLWTT)
-    {
+    public BoardingGate(string gateName, bool supportsDDJB, bool supportsCFFT, bool supportsLWTT) {
         GateName = gateName;
         SupportsDDJB = supportsDDJB;
         SupportsCFFT = supportsCFFT;
@@ -172,68 +170,54 @@ class BoardingGate
         AssignedFlightNumber = null;
     }
 
-    public bool AssignFlight(string flightNumber)
-    {
-        if (AssignedFlightNumber == null)
-        {
+    public bool AssignFlight(string flightNumber) {
+        if (AssignedFlightNumber == null) {
             AssignedFlightNumber = flightNumber;
             return true;
         }
         return false;
     }
 
-    public void UnassignFlight()
-    {
+    public void UnassignFlight() {
         AssignedFlightNumber = null;
     }
 
-    public override string ToString()
-    {
+    public override string ToString() {
         return $"Gate: {GateName}, SupportsDDJB: {SupportsDDJB}, SupportsCFFT: {SupportsCFFT}, SupportsLWTT: {SupportsLWTT}, AssignedFlight: {AssignedFlightNumber ?? "None"}";
     }
 }
 // Terminal class
-class Terminal
-{
+class Terminal {
     public string TerminalName { get; set; }
     public Dictionary<string, BoardingGate> Gates { get; private set; } = new();
 
-    public Terminal(string terminalName)
-    {
+    public Terminal(string terminalName) {
         TerminalName = terminalName;
     }
 
-    public void AddGate(BoardingGate gate)
-    {
+    public void AddGate(BoardingGate gate) {
         Gates[gate.GateName] = gate;
     }
 
-    public BoardingGate? GetUnassignedGate(Func<BoardingGate, bool> predicate)
-    {
-        foreach (var gate in Gates.Values)
-        {
-            if (gate.AssignedFlightNumber == null && predicate(gate))
-            {
+    public BoardingGate? GetUnassignedGate(Func<BoardingGate, bool> predicate) {
+        foreach (var gate in Gates.Values) {
+            if (gate.AssignedFlightNumber == null && predicate(gate)) {
                 return gate;
             }
         }
         return null;
     }
 
-    public void ListGates()
-    {
-        foreach (var gate in Gates.Values)
-        {
+    public void ListGates() {
+        foreach (var gate in Gates.Values) {
             Console.WriteLine(gate);
         }
     }
-    public void LoadGatesFromFile(string filePath)
-    {
+    public void LoadGatesFromFile(string filePath) {
         using StreamReader sr = new StreamReader(filePath);
         string? line;
         sr.ReadLine();
-        while ((line = sr.ReadLine()) != null)
-        {
+        while ((line = sr.ReadLine()) != null) {
             string[] gateInfo = line.Split(',');
             string gateName = gateInfo[0];
             bool supportsDDJB = bool.Parse(gateInfo[1]);

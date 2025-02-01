@@ -62,8 +62,6 @@ static void Main(string[] args) {
         }
     }
 }
-Main(args);
-
 // ---------------------------
 //       Basic Features
 // ---------------------------

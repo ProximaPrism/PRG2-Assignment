@@ -1,10 +1,16 @@
 ﻿// ---------------------------
 //       Main function
 // ---------------------------
-private static Dictionary<string, Airline> allAirlinesDict = new();
-private static Dictionary<string, Flight> allFlightsDict = new();
-private static Terminal terminal = new("T5");
+
+//private static Dictionary<string, Airline> allAirlinesDict = new();
+//private static Dictionary<string, Flight> allFlightsDict = new();
+//private static Terminal terminal = new("T5");
+
 static void Main(string[] args) {
+    Dictionary<string, Airline> allAirlinesDict = new();
+    Dictionary<string, Flight> allFlightsDict = new();
+    Terminal terminal = new("T5");
+
     LoadAirlines("airlines.csv", allAirlinesDict);
     LoadFlights("flights.csv", allFlightsDict);
     terminal.LoadGatesFromFile("boardinggates.csv");
@@ -34,13 +40,13 @@ static void Main(string[] args) {
                 terminal.ListGates();
                 break;
             case "3":
-                // AssignBoardingGate();
+                AssignBoardingGate(allFlightsDict, terminal);
                 break;
             case "4":
-                // CreateFlight();
+                CreateFlight(allFlightsDict);
                 break;
             case "5":
-                DisplayFlightSchedule(allFlightsDict);
+                DisplayFlightSchedule(allFlightsDict, allAirlinesDict, terminal);
                 break;
             case "6":
                 ModifyFlightDetails(allAirlinesDict);
@@ -61,6 +67,9 @@ static void Main(string[] args) {
         }
     }
 }
+// Required for the main function to initialize
+Main(args);
+
 // ---------------------------
 //       Basic Features
 // ---------------------------
@@ -174,74 +183,65 @@ static void CreateFlight(Dictionary<string, Flight> allFlightsDict) {
 }
 
 // Feature 7
-    static void DisplayFlightSchedule(Dictionary<string, Flight> allFlightsDict)
-    {
-        Console.WriteLine("Available Airlines:");
-        foreach (var airline in allAirlinesDict.Values)
-        {
-            Console.WriteLine($"{airline.code}: {airline.name}");
-        }
-        Console.Write("Enter Airline Code (e.g. SQ, MH): ");
-        string airlineCode = Console.ReadLine()?.Trim().ToUpper() ?? "";
-        if (!allAirlinesDict.TryGetValue(airlineCode, out Airline selectedAirline))
-        {
-            Console.WriteLine("Invalid Airline Code.");
-            return;
-        }
-        List<Flight> airlineFlights = new List<Flight>();
-        foreach (var flight in allFlightsDict.Values)
-        {
-            if (flight.flightNumber.Trim().StartsWith(airlineCode, StringComparison.OrdinalIgnoreCase))
-                airlineFlights.Add(flight);
-        }
-    
-        if (airlineFlights.Count == 0)
-        {
-            Console.WriteLine("No flights found for this airline.");
-            return;
-        }
-        Console.WriteLine($"\nFlights for {selectedAirline.name}:");
-        foreach (var flight in airlineFlights)
-        {
-            Console.WriteLine($"{flight.flightNumber}: {flight.origin} -> {flight.destination}");
-        }
-        Console.Write("\nEnter Flight Number: ");
-        string flightNumber = Console.ReadLine()?.Trim() ?? "";
-        Flight selectedFlight = airlineFlights.FirstOrDefault(f => f.flightNumber.Equals(flightNumber, StringComparison.OrdinalIgnoreCase));
-        if (selectedFlight == null)
-        {
-            Console.WriteLine("Invalid Flight Number.");
-            return;
-        }
-        Console.WriteLine("\nFlight Details:");
-        Console.WriteLine($"Flight Number: {selectedFlight.flightNumber}");
-        Console.WriteLine($"Airline Name: {selectedAirline.name}");
-        Console.WriteLine($"Origin: {selectedFlight.origin}");
-        Console.WriteLine($"Destination: {selectedFlight.destination}");
-        Console.WriteLine($"Expected Departure/Arrival Time: {selectedFlight.expectedTime}");
-        string specialRequest = "";
-        if (selectedFlight is NORMFlight)
-            specialRequest = "NORM";
-        else if (selectedFlight is LWTTFlight)
-            specialRequest = "LWTT";
-        else if (selectedFlight is DDJBFlight)
-            specialRequest = "DDJB";
-        else if (selectedFlight is CFFTFlight)
-            specialRequest = "CFFT";
-        Console.WriteLine($"Special Request Code: {specialRequest}");
-        string boardingGate = "None";
-        foreach (var gate in terminal.Gates.Values)
-        {
-            if (gate.AssignedFlightNumber != null &&
-                gate.AssignedFlightNumber.Trim().Equals(selectedFlight.flightNumber.Trim(), StringComparison.OrdinalIgnoreCase))
-            {
-                boardingGate = gate.GateName;
-                break;
-            }
-        }
-        Console.WriteLine($"Boarding Gate: {boardingGate}");
+static void DisplayFlightSchedule(Dictionary<string, Flight> allFlightsDict, Dictionary<string, Airline> allAirlinesDict, Terminal terminal) {
+    Console.WriteLine("Available Airlines:");
+    foreach (var airline in allAirlinesDict.Values) {
+        Console.WriteLine($"{airline.code}: {airline.name}");
     }
+    Console.Write("Enter Airline Code (e.g. SQ, MH): ");
+    string airlineCode = Console.ReadLine()?.Trim().ToUpper() ?? "";
+    if (!allAirlinesDict.TryGetValue(airlineCode, out Airline selectedAirline)) {
+        Console.WriteLine("Invalid Airline Code.");
+        return;
+    }
+    List<Flight> airlineFlights = new List<Flight>();
+    foreach (var flight in allFlightsDict.Values) {
+        if (flight.flightNumber.Trim().StartsWith(airlineCode, StringComparison.OrdinalIgnoreCase))
+            airlineFlights.Add(flight);
+    }
+
+    if (airlineFlights.Count == 0) {
+        Console.WriteLine("No flights found for this airline.");
+        return;
+    }
+    Console.WriteLine($"\nFlights for {selectedAirline.name}:");
+    foreach (var flight in airlineFlights) {
+        Console.WriteLine($"{flight.flightNumber}: {flight.origin} -> {flight.destination}");
+    }
+    Console.Write("\nEnter Flight Number: ");
+    string flightNumber = Console.ReadLine()?.Trim() ?? "";
+    Flight selectedFlight = airlineFlights.FirstOrDefault(f => f.flightNumber.Equals(flightNumber, StringComparison.OrdinalIgnoreCase));
+    if (selectedFlight == null) {
+        Console.WriteLine("Invalid Flight Number.");
+        return;
+    }
+    Console.WriteLine("\nFlight Details:");
+    Console.WriteLine($"Flight Number: {selectedFlight.flightNumber}");
+    Console.WriteLine($"Airline Name: {selectedAirline.name}");
+    Console.WriteLine($"Origin: {selectedFlight.origin}");
+    Console.WriteLine($"Destination: {selectedFlight.destination}");
+    Console.WriteLine($"Expected Departure/Arrival Time: {selectedFlight.expectedTime}");
+    string specialRequest = "";
+    if (selectedFlight is NORMFlight)
+        specialRequest = "NORM";
+    else if (selectedFlight is LWTTFlight)
+        specialRequest = "LWTT";
+    else if (selectedFlight is DDJBFlight)
+        specialRequest = "DDJB";
+    else if (selectedFlight is CFFTFlight)
+        specialRequest = "CFFT";
+    Console.WriteLine($"Special Request Code: {specialRequest}");
+    string boardingGate = "None";
+    foreach (var gate in terminal.Gates.Values) {
+        if (gate.AssignedFlightNumber != null &&
+            gate.AssignedFlightNumber.Trim().Equals(selectedFlight.flightNumber.Trim(), StringComparison.OrdinalIgnoreCase)) {
+            boardingGate = gate.GateName;
+            break;
+        }
+    }
+    Console.WriteLine($"Boarding Gate: {boardingGate}");
 }
+
 
 // Feature 8
 static void ModifyFlightDetails(Dictionary<string, Airline> allAirlinesDict) {

@@ -175,10 +175,72 @@ static void CreateFlight(Dictionary<string, Flight> allFlightsDict) {
 }
 
 // Feature 7
-static void DisplayFlightSchedule(Dictionary<string, Flight> allFlightsDict) {
-    Console.WriteLine("Flight number | Special Request Code");
-    foreach (var flight in allFlightsDict.Values) {
-        Console.WriteLine(flight);
+    static void DisplayFlightSchedule(Dictionary<string, Flight> allFlightsDict)
+    {
+        Console.WriteLine("Available Airlines:");
+        foreach (var airline in allAirlinesDict.Values)
+        {
+            Console.WriteLine($"{airline.code}: {airline.name}");
+        }
+        Console.Write("Enter Airline Code (e.g. SQ, MH): ");
+        string airlineCode = Console.ReadLine()?.Trim().ToUpper() ?? "";
+        if (!allAirlinesDict.TryGetValue(airlineCode, out Airline selectedAirline))
+        {
+            Console.WriteLine("Invalid Airline Code.");
+            return;
+        }
+        List<Flight> airlineFlights = new List<Flight>();
+        foreach (var flight in allFlightsDict.Values)
+        {
+            if (flight.flightNumber.Trim().StartsWith(airlineCode, StringComparison.OrdinalIgnoreCase))
+                airlineFlights.Add(flight);
+        }
+    
+        if (airlineFlights.Count == 0)
+        {
+            Console.WriteLine("No flights found for this airline.");
+            return;
+        }
+        Console.WriteLine($"\nFlights for {selectedAirline.name}:");
+        foreach (var flight in airlineFlights)
+        {
+            Console.WriteLine($"{flight.flightNumber}: {flight.origin} -> {flight.destination}");
+        }
+        Console.Write("\nEnter Flight Number: ");
+        string flightNumber = Console.ReadLine()?.Trim() ?? "";
+        Flight selectedFlight = airlineFlights.FirstOrDefault(f => f.flightNumber.Equals(flightNumber, StringComparison.OrdinalIgnoreCase));
+        if (selectedFlight == null)
+        {
+            Console.WriteLine("Invalid Flight Number.");
+            return;
+        }
+        Console.WriteLine("\nFlight Details:");
+        Console.WriteLine($"Flight Number: {selectedFlight.flightNumber}");
+        Console.WriteLine($"Airline Name: {selectedAirline.name}");
+        Console.WriteLine($"Origin: {selectedFlight.origin}");
+        Console.WriteLine($"Destination: {selectedFlight.destination}");
+        Console.WriteLine($"Expected Departure/Arrival Time: {selectedFlight.expectedTime}");
+        string specialRequest = "";
+        if (selectedFlight is NORMFlight)
+            specialRequest = "NORM";
+        else if (selectedFlight is LWTTFlight)
+            specialRequest = "LWTT";
+        else if (selectedFlight is DDJBFlight)
+            specialRequest = "DDJB";
+        else if (selectedFlight is CFFTFlight)
+            specialRequest = "CFFT";
+        Console.WriteLine($"Special Request Code: {specialRequest}");
+        string boardingGate = "None";
+        foreach (var gate in terminal.Gates.Values)
+        {
+            if (gate.AssignedFlightNumber != null &&
+                gate.AssignedFlightNumber.Trim().Equals(selectedFlight.flightNumber.Trim(), StringComparison.OrdinalIgnoreCase))
+            {
+                boardingGate = gate.GateName;
+                break;
+            }
+        }
+        Console.WriteLine($"Boarding Gate: {boardingGate}");
     }
 }
 

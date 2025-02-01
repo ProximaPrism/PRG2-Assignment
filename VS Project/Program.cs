@@ -8,12 +8,22 @@
 
 static void Main(string[] args) {
     Dictionary<string, Airline> allAirlinesDict = new();
+
+    // key to store airline number of flight (Ex: "SQ 115", "EK 870", etc.)
+    // value to store key details of flight
     Dictionary<string, Flight> allFlightsDict = new();
     Terminal terminal = new("T5");
 
     LoadAirlines("airlines.csv", allAirlinesDict);
     LoadFlights("flights.csv", allFlightsDict);
     terminal.LoadGatesFromFile("boardinggates.csv");
+
+    // Initalize flights to each airline
+    foreach (Airline airline in allAirlinesDict.Values) {
+        foreach (Flight flight in allFlightsDict.Values) {
+            airline.AddFlight(flight);
+        }
+    }
 
     while (true) {
         Console.WriteLine("=============================================");
@@ -34,7 +44,7 @@ static void Main(string[] args) {
 
         switch (Console.ReadLine()) {
             case "1":
-                ListFlights(allFlightsDict);
+                ListFlights(allFlightsDict, allAirlinesDict);
                 break;
             case "2":
                 terminal.ListGates();
@@ -88,8 +98,6 @@ static void LoadAirlines(string filePath, Dictionary<string, Airline> allAirline
 }
 
 // Feature 2
-// key to store airline number of flight (Ex: "SQ 115", "EK 870", etc.)
-// value to store key details of flight
 static void LoadFlights(string filePath, Dictionary<string, Flight> allFlightsDict) {
     using (StreamReader sr = new StreamReader(filePath)) {
         sr.ReadLine();
@@ -125,9 +133,14 @@ static void LoadFlights(string filePath, Dictionary<string, Flight> allFlightsDi
 }
 
 // Feature 3
-static void ListFlights(Dictionary<string, Flight> allFlightsDict) {
-    foreach (KeyValuePair<string, Flight> kvp in allFlightsDict) {
-        Console.WriteLine(kvp.Key);
+static void ListFlights(Dictionary<string, Flight> allFlightsDict, Dictionary<string, Airline> allAirlinesDict) {
+    Console.WriteLine("=============================================");
+    Console.WriteLine("List of Flights for Changi Airport Terminal 5");
+    Console.WriteLine("=============================================");
+    Console.WriteLine($"{"Flight Number",-16}{"Airline Name",-23}{"Origin",-23}{"Destination",-23}{"Expected Departure/Arrival Time"}");
+    
+    foreach (Airline airline in allAirlinesDict.Values) {
+        Console.WriteLine(airline);
     }
 }
 
@@ -196,8 +209,9 @@ static void DisplayFlightSchedule(Dictionary<string, Flight> allFlightsDict, Dic
     }
     List<Flight> airlineFlights = new List<Flight>();
     foreach (var flight in allFlightsDict.Values) {
-        if (flight.flightNumber.Trim().StartsWith(airlineCode, StringComparison.OrdinalIgnoreCase))
+        if (flight.flightNumber.Trim().StartsWith(airlineCode, StringComparison.OrdinalIgnoreCase)) {
             airlineFlights.Add(flight);
+        }
     }
 
     if (airlineFlights.Count == 0) {

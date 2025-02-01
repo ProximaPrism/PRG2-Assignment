@@ -1,4 +1,6 @@
 ﻿// Flight classes
+using System.Text;
+
 abstract class Flight {
     public string flightNumber { get; set; }
     public string origin { get; set; }
@@ -15,6 +17,7 @@ abstract class Flight {
     }
 
     public virtual double CalculateFees() {
+        // costs
         // boarding gate base fee
         double totalCost = 300;
 
@@ -27,10 +30,7 @@ abstract class Flight {
             totalCost += 500;
         }
 
-        // TODO: check for more than 5 flights (discount of 3% before any deductions below)
-
-        // TODO: check for any 3 flights arriving / departing
-
+        // discounts
         if (expectedTime.CompareTo(new TimeOnly(hour: 11, minute: 0)) < 0 || expectedTime.CompareTo(new TimeOnly(hour: 21, minute: 0)) > 0) {
             // for flights arriving / departing before 11am or after 9pm
             totalCost -= 110;
@@ -42,7 +42,7 @@ abstract class Flight {
     }
 
     public override string ToString() {
-        return $"{flightNumber,-16}{"3"}";
+        return $"A new flight with {flightNumber} has been added";
     }
 }
 
@@ -57,7 +57,7 @@ class NORMFlight : Flight {
     }
 
     public override string ToString() {
-        throw new NotImplementedException();
+        return base.ToString();
     }
 }
 
@@ -75,7 +75,7 @@ class LWTTFlight : Flight {
     }
 
     public override string ToString() {
-        throw new NotImplementedException();
+        return base.ToString();
     }
 }
 
@@ -93,7 +93,7 @@ class DDJBFlight : Flight {
     }
 
     public override string ToString() {
-        throw new NotImplementedException();
+        return base.ToString();
     }
 }
 
@@ -111,7 +111,7 @@ class CFFTFlight : Flight {
     }
 
     public override string ToString() {
-        throw new NotImplementedException();
+        return base.ToString();
     }
 }
 
@@ -130,6 +130,9 @@ class Airline {
     public bool AddFlight(Flight flight) {
         if ((flight.flightNumber).Contains(code)) {
             flights.Add(flight.flightNumber, flight);
+
+            // debug flights
+            Console.WriteLine($"flight : {flight.flightNumber}");
             return true;
         }
         return false;
@@ -146,11 +149,25 @@ class Airline {
     }
 
     public double CalculateFees() {
-        throw new NotImplementedException();
+        double totalCost = 0;
+        bool flightDiscount = false;
+        foreach (KeyValuePair<string, Flight> kvp in flights) {
+            // check for more than 5 flights (discount of 3% before any deductions below)
+            if (flights.Count > 5) {
+                flightDiscount = true;
+            }
+
+            kvp.Value.CalculateFees();
+
+            // check for any 3 flights arriving / departing
+
+        }
+        return totalCost;
     }
 
     public override string ToString() {
-        throw new NotImplementedException();
+        var flightStrings = flights.Select(kvp => $"{kvp.Key,-16}{name,-23}{kvp.Value.origin,-23}{kvp.Value.destination,-23}{kvp.Value.expectedTime}");
+        return string.Join("\n", flightStrings);
     }
 }
 
@@ -208,20 +225,18 @@ class Terminal {
         return null;
     }
 
-    public void ListGates()
-{
-    Console.WriteLine("{0,-10} {1,-15} {2,-15} {3,-15} {4,-20}", "Gate", "Supports DDJB", "Supports CFFT", "Supports LWTT", "Assigned Flight");
+    public void ListGates() {
+        Console.WriteLine("{0,-10} {1,-15} {2,-15} {3,-15} {4,-20}", "Gate", "Supports DDJB", "Supports CFFT", "Supports LWTT", "Assigned Flight");
 
-    foreach (var gate in Gates.Values)
-    {
-        Console.WriteLine("{0,-10} {1,-15} {2,-15} {3,-15} {4,-20}",
-            gate.GateName,
-            gate.SupportsDDJB ? "Yes" : "No",
-            gate.SupportsCFFT ? "Yes" : "No",
-            gate.SupportsLWTT ? "Yes" : "No",
-            gate.AssignedFlightNumber ?? "None");
+        foreach (var gate in Gates.Values) {
+            Console.WriteLine("{0,-10} {1,-15} {2,-15} {3,-15} {4,-20}",
+                gate.GateName,
+                gate.SupportsDDJB ? "Yes" : "No",
+                gate.SupportsCFFT ? "Yes" : "No",
+                gate.SupportsLWTT ? "Yes" : "No",
+                gate.AssignedFlightNumber ?? "None");
+        }
     }
-}
     public void LoadGatesFromFile(string filePath) {
         using StreamReader sr = new StreamReader(filePath);
         string? line;

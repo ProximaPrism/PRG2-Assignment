@@ -201,8 +201,9 @@ static void Main(string[] args)
         Console.WriteLine("6. Calculate Total Fees per Airline");
         Console.WriteLine("7. Display Flight Schedule");
         Console.WriteLine("0. Exit");
-        Console.Write("Please select your option: ");
         Console.WriteLine("=============================================");
+        Console.Write("Please select your option: ");
+        
 
         switch (Console.ReadLine())
         {

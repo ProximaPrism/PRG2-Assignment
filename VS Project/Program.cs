@@ -217,3 +217,76 @@ while (true) {
             break;
     }
 }
+// Advanced Feature 1: Bulk Assign Unassigned Flights to Boarding Gates
+static void BulkAssignBoardingGates()
+{
+    Queue<Flight> unassignedFlights = new Queue<Flight>();
+    
+    // Identify unassigned flights
+    foreach (var flight in allFlightsDict.Values)
+    {
+        if (!terminal.Gates.Values.Any(g => g.AssignedFlightNumber == flight.flightNumber))
+        {
+            unassignedFlights.Enqueue(flight);
+        }
+    }
+    
+    Console.WriteLine($"Total Unassigned Flights: {unassignedFlights.Count}");
+    
+    // Assign flights to available gates
+    while (unassignedFlights.Count > 0)
+    {
+        Flight flight = unassignedFlights.Dequeue();
+        BoardingGate? assignedGate = terminal.GetUnassignedGate(g =>
+            (flight is DDJBFlight && g.SupportsDDJB) ||
+            (flight is CFFTFlight && g.SupportsCFFT) ||
+            (flight is LWTTFlight && g.SupportsLWTT) ||
+            (flight is NORMFlight));
+
+        if (assignedGate != null)
+        {
+            assignedGate.AssignFlight(flight.flightNumber);
+            Console.WriteLine($"Assigned {flight.flightNumber} to Gate {assignedGate.GateName}");
+        }
+        else
+        {
+            Console.WriteLine($"No available gate for {flight.flightNumber}");
+        }
+    }
+}
+
+// Advanced Feature 2: Calculate Total Fees per Airline
+static void CalculateTotalFeesPerAirline()
+{
+    Dictionary<string, double> airlineFees = new();
+    Dictionary<string, int> flightCounts = new();
+    
+    foreach (var flight in allFlightsDict.Values)
+    {
+        double fee = 300; // Base gate fee
+        
+        if (flight.destination.Contains("SIN")) fee += 500;
+        if (flight.origin.Contains("SIN")) fee += 800;
+        if (flight is DDJBFlight) fee += 300;
+        if (flight is CFFTFlight) fee += 150;
+        if (flight is LWTTFlight) fee += 500;
+
+        if (!airlineFees.ContainsKey(flight.flightNumber.Substring(0, 2)))
+        {
+            airlineFees[flight.flightNumber.Substring(0, 2)] = 0;
+            flightCounts[flight.flightNumber.Substring(0, 2)] = 0;
+        }
+
+        airlineFees[flight.flightNumber.Substring(0, 2)] += fee;
+        flightCounts[flight.flightNumber.Substring(0, 2)]++;
+    }
+    
+    foreach (var airline in airlineFees.Keys)
+    {
+        double totalFee = airlineFees[airline];
+        int flights = flightCounts[airline];
+        double discount = (flights / 3) * 350; // Discount for every 3 flights
+        if (flights > 5) discount += totalFee * 0.03;
+        Console.WriteLine($"{airline}: Original Fee: ${totalFee}, Discount: ${discount}, Final Fee: ${totalFee - discount}");
+    }
+}

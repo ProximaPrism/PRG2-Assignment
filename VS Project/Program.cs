@@ -28,10 +28,10 @@ while (true)
     Console.Write("Please select your option: ");
 
 
-    switch (Console.ReadLine())
-    {
+        switch (Console.ReadLine())
+        {
         case "1":
-            DisplayFlightSchedule();
+            DisplayFlightSchedule(allFlightsDict);
             break;
         case "2":
             terminal.ListGates();
@@ -43,16 +43,16 @@ while (true)
             CreateFlight();
             break;
         case "5":
-            DisplayFlightSchedule();
+            DisplayFlightSchedule(allFlightsDict);
             break;
         case "6":
-
+            ModifyFlightDetails(allAirlinesDict);
             break;
         case "7":
-            BulkAssignBoardingGates();
+            BulkAssignBoardingGates(allFlightsDict, terminal);
             break;
         case "8":
-            CalculateTotalFeesPerAirline();
+            CalculateTotalFeesPerAirline(allFlightsDict);
             break;
         case "0":
             Console.WriteLine("Now exiting...");
@@ -61,7 +61,7 @@ while (true)
         default:
             Console.WriteLine("Invalid option. Please try again.");
             break;
-    }
+        }
 }
 
 Main(args);

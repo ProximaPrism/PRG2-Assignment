@@ -117,9 +117,9 @@ class CFFTFlight : Flight {
 
 // Airline class
 class Airline {
-    string name { get; set; }
-    string code { get; set; }
-    Dictionary<string, Flight> flights { get; set; } = new();
+    public string name { get; set; }
+    public string code { get; set; }
+    public Dictionary<string, Flight> flights { get; set; } = new();
 
     public Airline(string name, string code, Dictionary<string, Flight> flights) {
         this.name = name;

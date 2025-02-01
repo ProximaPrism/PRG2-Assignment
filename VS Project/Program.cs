@@ -4,8 +4,8 @@
 
 static void Main(string[] args) {
     LoadAirlines("airlines.csv", allAirlinesDict);
-LoadFlights("flights.csv", allFlightsDict);
-terminal.LoadGatesFromFile("boardinggates.csv");
+    LoadFlights("flights.csv", allFlightsDict);
+    terminal.LoadGatesFromFile("boardinggates.csv");
 
 while (true)
 {

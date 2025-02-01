@@ -1,11 +1,14 @@
 ﻿// ---------------------------
 //       Main function
 // ---------------------------
-
+private static Dictionary<string, Airline> allAirlinesDict = new();
+private static Dictionary<string, Flight> allFlightsDict = new();
+private static Terminal terminal = new("T5");
 static void Main(string[] args) {
     LoadAirlines("airlines.csv", allAirlinesDict);
     LoadFlights("flights.csv", allFlightsDict);
     terminal.LoadGatesFromFile("boardinggates.csv");
+    
 
 while (true)
 {

@@ -197,34 +197,16 @@ static void CreateFlight(Dictionary<string, Flight> allFlightsDict) {
 
 // Feature 7
 static void DisplayFlightSchedule(Dictionary<string, Flight> allFlightsDict, Dictionary<string, Airline> allAirlinesDict, Terminal terminal) {
-    Console.WriteLine("Available Airlines:");
-    foreach (var airline in allAirlinesDict.Values) {
-        Console.WriteLine($"{airline.code}: {airline.name}");
-    }
-    Console.Write("Enter Airline Code (e.g. SQ, MH): ");
-    string airlineCode = Console.ReadLine()?.Trim().ToUpper() ?? "";
-    if (!allAirlinesDict.TryGetValue(airlineCode, out Airline selectedAirline)) {
-        Console.WriteLine("Invalid Airline Code.");
-        return;
-    }
-    List<Flight> airlineFlights = new List<Flight>();
-    foreach (var flight in allFlightsDict.Values) {
-        if (flight.flightNumber.Trim().StartsWith(airlineCode, StringComparison.OrdinalIgnoreCase)) {
-            airlineFlights.Add(flight);
-        }
-    }
+    Airline selectedAirline = HandleAirlineCode(allAirlinesDict);
+    List<Flight> airlineFlights = [.. selectedAirline.flights.Values];
 
-    if (airlineFlights.Count == 0) {
-        Console.WriteLine("No flights found for this airline.");
-        return;
-    }
     Console.WriteLine($"\nFlights for {selectedAirline.name}:");
     foreach (var flight in airlineFlights) {
         Console.WriteLine($"{flight.flightNumber}: {flight.origin} -> {flight.destination}");
     }
     Console.Write("\nEnter Flight Number: ");
     string flightNumber = Console.ReadLine()?.Trim() ?? "";
-    Flight selectedFlight = airlineFlights.FirstOrDefault(f => f.flightNumber.Equals(flightNumber, StringComparison.OrdinalIgnoreCase));
+    Flight? selectedFlight = airlineFlights.FirstOrDefault(f => f.flightNumber.Equals(flightNumber, StringComparison.OrdinalIgnoreCase));
     if (selectedFlight == null) {
         Console.WriteLine("Invalid Flight Number.");
         return;
@@ -254,6 +236,23 @@ static void DisplayFlightSchedule(Dictionary<string, Flight> allFlightsDict, Dic
         }
     }
     Console.WriteLine($"Boarding Gate: {boardingGate}");
+}
+
+static Airline HandleAirlineCode(Dictionary<string, Airline> allAirlinesDict) {
+    Console.WriteLine("Available Airlines:");
+    foreach (var airline in allAirlinesDict.Values) {
+        Console.WriteLine($"{airline.code}: {airline.name}");
+    }
+    Console.Write("Enter Airline Code (e.g. SQ, MH): ");
+    string airlineCode = Console.ReadLine() ?? "";
+
+    foreach (KeyValuePair<string, Airline> kvp in allAirlinesDict) {
+        if (airlineCode.Trim().ToUpper() == kvp.Key) {
+            Console.WriteLine(kvp.Value);
+            return kvp.Value;
+        }
+    }
+    throw new FormatException("Failed to find flights of selected airline");
 }
 
 
@@ -339,6 +338,7 @@ static void ModifyFlightDetails(Dictionary<string, Airline> allAirlinesDict) {
 }
 
 // Feature 9
+// Implemented as interfaces in the classes
 
 // Advanced Feature 1: Bulk Assign Unassigned Flights to Boarding Gates
 static void BulkAssignBoardingGates(Dictionary<string, Flight> allFlightsDict, Terminal terminal) {

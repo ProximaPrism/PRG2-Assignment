@@ -1,6 +1,4 @@
 ﻿// Flight classes
-using System.Text;
-
 abstract class Flight {
     public string flightNumber { get; set; }
     public string origin { get; set; }

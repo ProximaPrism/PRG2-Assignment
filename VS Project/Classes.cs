@@ -1,5 +1,5 @@
 ﻿// Flight classes
-abstract class Flight {
+abstract class Flight : IComparable<Flight> {
     public string flightNumber { get; set; }
     public string origin { get; set; }
     public string destination { get; set; }
@@ -33,6 +33,11 @@ abstract class Flight {
     public override string ToString() {
         return $"A new flight with {flightNumber} has been added";
     }
+
+    public int CompareTo(Flight other) { 
+        if (other == null) return 1;
+        return expectedTime.CompareTo(other.expectedTime);
+    }
 }
 
 // Inherited flights
@@ -55,7 +60,7 @@ class LWTTFlight : Flight {
 
     public LWTTFlight(string flightNumber, string origin, string destination, DateTime expectedTime, string status)
         : base(flightNumber, origin, destination, expectedTime, status) {
-        this.requestFee = 500;
+        requestFee = 500;
     }
 
     public override double CalculateFees() {
@@ -73,7 +78,7 @@ class DDJBFlight : Flight {
 
     public DDJBFlight(string flightNumber, string origin, string destination, DateTime expectedTime, string status)
         : base(flightNumber, origin, destination, expectedTime, status) {
-        this.requestFee = 300;
+        requestFee = 300;
     }
 
     public override double CalculateFees() {
@@ -91,7 +96,7 @@ class CFFTFlight : Flight {
 
     public CFFTFlight(string flightNumber, string origin, string destination, DateTime expectedTime, string status)
         : base(flightNumber, origin, destination, expectedTime, status) {
-        this.requestFee = 150;
+        requestFee = 150;
     }
 
     public override double CalculateFees() {
@@ -119,9 +124,6 @@ class Airline {
     public bool AddFlight(Flight flight) {
         if ((flight.flightNumber).Contains(code)) {
             flights.Add(flight.flightNumber, flight);
-
-            // debug flights
-            Console.WriteLine($"flight : {flight.flightNumber}");
             return true;
         }
         return false;
@@ -152,7 +154,8 @@ class Airline {
             // check for every 3 flights arriving / departing
             totalCost -= (350 * (double)(Math.Floor((decimal) flights.Count / 3)));
             // for flights arriving / departing before 11am or after 9pm
-            if (flight.expectedTime.CompareTo(new TimeOnly(hour: 11, minute: 0)) < 0 || flight.expectedTime.CompareTo(new TimeOnly(hour: 21, minute: 0)) > 0) {
+            if (flight.expectedTime.TimeOfDay.CompareTo(new TimeOnly(hour: 11, minute: 0).ToTimeSpan()) < 0 || 
+                flight.expectedTime.TimeOfDay.CompareTo(new TimeOnly(hour: 21, minute: 0).ToTimeSpan()) > 0) {
                 totalCost -= 110;
             }
             // for each flight with the Origin of Dubai(DXB), Bangkok(BKK) or Tokyo(NRT

@@ -17,26 +17,17 @@ abstract class Flight {
     public virtual double CalculateFees() {
         // costs
         // boarding gate base fee
-        double totalCost = 300;
+        double baseCost = 300;
 
         if (origin.Contains("SIN")) {
             // departing flight -> $800
-            totalCost += 800;
+            baseCost += 800;
         }
         if (destination.Contains("SIN")) {
             // arriving flight -> $500
-            totalCost += 500;
+            baseCost += 500;
         }
-
-        // discounts
-        if (expectedTime.CompareTo(new TimeOnly(hour: 11, minute: 0)) < 0 || expectedTime.CompareTo(new TimeOnly(hour: 21, minute: 0)) > 0) {
-            // for flights arriving / departing before 11am or after 9pm
-            totalCost -= 110;
-        }
-        if (origin.Contains("DXB") || origin.Contains("BKK") || origin.Contains("NRT")) {
-            totalCost -= 25;
-        }
-        return totalCost;
+        return baseCost;
     }
 
     public override string ToString() {
@@ -50,8 +41,8 @@ class NORMFlight : Flight {
         : base(flightNumber, origin, destination, expectedTime, status) { }
 
     public override double CalculateFees() {
-        double totalCost = base.CalculateFees() - 50; // $50 off for no special codes
-        return totalCost;
+        double baseCost = base.CalculateFees();
+        return baseCost;
     }
 
     public override string ToString() {
@@ -68,8 +59,8 @@ class LWTTFlight : Flight {
     }
 
     public override double CalculateFees() {
-        double totalCost = requestFee + base.CalculateFees();
-        return totalCost;
+        double baseCost = requestFee + base.CalculateFees();
+        return baseCost;
     }
 
     public override string ToString() {
@@ -86,8 +77,8 @@ class DDJBFlight : Flight {
     }
 
     public override double CalculateFees() {
-        double totalCost = requestFee + base.CalculateFees();
-        return totalCost;
+        double baseCost = requestFee + base.CalculateFees();
+        return baseCost;
     }
 
     public override string ToString() {
@@ -104,8 +95,8 @@ class CFFTFlight : Flight {
     }
 
     public override double CalculateFees() {
-        double totalCost = requestFee + base.CalculateFees();
-        return totalCost;
+        double baseCost = requestFee + base.CalculateFees();
+        return baseCost;
     }
 
     public override string ToString() {
@@ -148,17 +139,30 @@ class Airline {
 
     public double CalculateFees() {
         double totalCost = 0;
-        bool flightDiscount = false;
-        foreach (KeyValuePair<string, Flight> kvp in flights) {
+        foreach (Flight flight in flights.Values) {
+            // Base cost
+            totalCost += flight.CalculateFees();
+
             // check for more than 5 flights (discount of 3% before any deductions below)
             if (flights.Count > 5) {
-                flightDiscount = true;
+                totalCost *= 0.97;
             }
 
-            kvp.Value.CalculateFees();
-
-            // check for any 3 flights arriving / departing
-
+            // discounts
+            // check for every 3 flights arriving / departing
+            totalCost -= (350 * (double)(Math.Floor((decimal) flights.Count / 3)));
+            // for flights arriving / departing before 11am or after 9pm
+            if (flight.expectedTime.CompareTo(new TimeOnly(hour: 11, minute: 0)) < 0 || flight.expectedTime.CompareTo(new TimeOnly(hour: 21, minute: 0)) > 0) {
+                totalCost -= 110;
+            }
+            // for each flight with the Origin of Dubai(DXB), Bangkok(BKK) or Tokyo(NRT
+            if (flight.origin.Contains("DXB") || flight.origin.Contains("BKK") || flight.origin.Contains("NRT")) {
+                totalCost -= 25;
+            }
+            // TODO: add $50 off for no special codes -> to check if the flight is a NORM flight
+            if (flight is NORMFlight) {
+                totalCost -= 50;
+            }
         }
         return totalCost;
     }

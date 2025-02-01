@@ -20,7 +20,7 @@ while (true)
     Console.WriteLine("3. Assign a Boarding Gate to a Flight");
     Console.WriteLine("4. Create Flight");
     Console.WriteLine("5. Display Flight Schedule");
-    Console.WriteLine("6. ");
+    Console.WriteLine("6. Modify Flight Details");
     Console.WriteLine("7. Bulk Assign Unassigned Flights to Gates");
     Console.WriteLine("8. Calculate Total Fees per Airline");
     Console.WriteLine("0. Exit");

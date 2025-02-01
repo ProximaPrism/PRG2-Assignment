@@ -184,6 +184,7 @@ static void CreateFlight()
 
 // Feature 7
 static void DisplayFlightSchedule(Dictionary<string, Flight> allFlightsDict) {
+    Console.WriteLine("Flight number | Special Request Code");
     foreach (var flight in allFlightsDict.Values) {
         Console.WriteLine(flight);
     }

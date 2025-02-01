@@ -1,9 +1,9 @@
 ﻿// Flight classes
 abstract class Flight {
     public string flightNumber { get; set; }
-    protected string origin { get; set; }
-    protected string destination { get; set; }
-    protected DateTime expectedTime { get; set; }
+    public string origin { get; set; }
+    public string destination { get; set; }
+    public DateTime expectedTime { get; set; }
     public string status { get; set; }
 
     public Flight(string flightNumber, string origin, string destination, DateTime expectedTime, string status) {

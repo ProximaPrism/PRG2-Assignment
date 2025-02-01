@@ -78,7 +78,7 @@ static void CreateFlight() {
         "CFFT" => new CFFTFlight(flightNumber, origin, destination, expectedTime, "On Time"),
         _ => new NORMFlight(flightNumber, origin, destination, expectedTime, "On Time"),
     };
-
+//Side note: ?? is for the default input if input is invalid
     allFlightsDict[flightNumber] = flight;
     Console.WriteLine($"Flight {flightNumber} has been added!");
 }
@@ -177,7 +177,7 @@ static void ModifyFlightDetails() {
 
 // Feature 9
 
-// Call stack
+// Call stack (User interface) [Once features are added, UI needs to be updated]
 private static Dictionary<string, Airline> allAirlinesDict = new();
 private static Dictionary<string, Flight> allFlightsDict = new();
 private static Terminal terminal = new("T5");

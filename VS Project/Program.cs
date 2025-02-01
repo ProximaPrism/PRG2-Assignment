@@ -178,43 +178,62 @@ static void ModifyFlightDetails() {
 // Feature 9
 
 // Call stack
-Dictionary<string, Airline> allAirlinesDict = new();
-Dictionary<string, Flight> allFlightsDict = new();
-Terminal terminal = new("T5");
+private static Dictionary<string, Airline> allAirlinesDict = new();
+private static Dictionary<string, Flight> allFlightsDict = new();
+private static Terminal terminal = new("T5");
 
-LoadAirlines("airlines.csv", allAirlinesDict);
-LoadFlights("flights.csv", allFlightsDict);
-terminal.LoadGatesFromFile("boardinggates.csv");
+static void Main(string[] args)
+{
+    LoadAirlines("airlines.csv", allAirlinesDict);
+    LoadFlights("flights.csv", allFlightsDict);
+    terminal.LoadGatesFromFile("boardinggates.csv");
 
-while (true) {
-    Console.WriteLine("=============================================");
-    Console.WriteLine("Welcome to Changi Airport Terminal 5");
-    Console.WriteLine("=============================================");
-    Console.WriteLine("1. List All Flights");
-    Console.WriteLine("2. List Boarding Gates");
-    Console.WriteLine("3. Assign a Boarding Gate to a Flight");
-    Console.WriteLine("4. Create Flight");
-    Console.WriteLine("7. Display Flight Schedule");
-    Console.WriteLine("0. Exit");
-    Console.Write("Please select your option: ");
+    while (true)
+    {
+        Console.WriteLine("=============================================");
+        Console.WriteLine("Welcome to Changi Airport Terminal 5");
+        Console.WriteLine("=============================================");
+        Console.WriteLine("1. List All Flights");
+        Console.WriteLine("2. List Boarding Gates");
+        Console.WriteLine("3. Assign a Boarding Gate to a Flight");
+        Console.WriteLine("4. Create Flight");
+        Console.WriteLine("5. Bulk Assign Unassigned Flights to Gates");
+        Console.WriteLine("6. Calculate Total Fees per Airline");
+        Console.WriteLine("7. Display Flight Schedule");
+        Console.WriteLine("0. Exit");
+        Console.Write("Please select your option: ");
 
-    switch (Console.ReadLine()) {
-        case "1":
-            DisplayFlightSchedule();
-            break;
-        case "2":
-            terminal.ListGates();
-            break;
-        case "4":
-            CreateFlight();
-            break;
-        case "0":
-            Console.WriteLine("Now exiting...");
-            Environment.Exit(0);
-            break;
-        default:
-            Console.WriteLine("Invalid option. Please try again.");
-            break;
+        switch (Console.ReadLine())
+        {
+            case "1":
+                DisplayFlightSchedule();
+                break;
+            case "2":
+                terminal.ListGates();
+                break;
+            case "3":
+                AssignBoardingGate();
+                break;
+            case "4":
+                CreateFlight();
+                break;
+            case "5":
+                BulkAssignBoardingGates();
+                break;
+            case "6":
+                CalculateTotalFeesPerAirline();
+                break;
+            case "7":
+                DisplayFlightSchedule();
+                break;
+            case "0":
+                Console.WriteLine("Now exiting...");
+                Environment.Exit(0);
+                break;
+            default:
+                Console.WriteLine("Invalid option. Please try again.");
+                break;
+        }
     }
 }
 // Advanced Feature 1: Bulk Assign Unassigned Flights to Boarding Gates

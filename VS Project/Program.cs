@@ -3,59 +3,61 @@
 // ---------------------------
 
 static void Main(string[] args) {
-    Dictionary<string, Airline> allAirlinesDict = new();
-    Dictionary<string, Flight> allFlightsDict = new();
-    Terminal terminal = new("T5");
     LoadAirlines("airlines.csv", allAirlinesDict);
-    LoadFlights("flights.csv", allFlightsDict);
-    terminal.LoadGatesFromFile("boardinggates.csv");
+LoadFlights("flights.csv", allFlightsDict);
+terminal.LoadGatesFromFile("boardinggates.csv");
 
-    while (true) {
-        Console.WriteLine("=============================================");
-        Console.WriteLine("Welcome to Changi Airport Terminal 5");
-        Console.WriteLine("=============================================");
-        Console.WriteLine("1. List All Flights");
-        Console.WriteLine("2. List Boarding Gates");
-        Console.WriteLine("3. Assign a Boarding Gate to a Flight");
-        Console.WriteLine("4. Create Flight");
-        Console.WriteLine("5. Bulk Assign Unassigned Flights to Gates");
-        Console.WriteLine("6. Calculate Total Fees per Airline");
-        Console.WriteLine("7. Display Flight Schedule");
-        Console.WriteLine("0. Exit");
-        Console.WriteLine("=============================================");
-        Console.Write("Please select your option: ");
+while (true)
+{
+    Console.WriteLine("=============================================");
+    Console.WriteLine("Welcome to Changi Airport Terminal 5");
+    Console.WriteLine("=============================================");
+    Console.WriteLine("1. List All Flights");
+    Console.WriteLine("2. List Boarding Gates");
+    Console.WriteLine("3. Assign a Boarding Gate to a Flight");
+    Console.WriteLine("4. Create Flight");
+    Console.WriteLine("5. Display Flight Schedule");
+    Console.WriteLine("6. ");
+    Console.WriteLine("7. Bulk Assign Unassigned Flights to Gates");
+    Console.WriteLine("8. Calculate Total Fees per Airline");
+    Console.WriteLine("0. Exit");
+    Console.WriteLine("=============================================");
+    Console.Write("Please select your option: ");
 
 
-        switch (Console.ReadLine()) {
-            case "1":
-                DisplayFlightSchedule(allFlightsDict);
-                break;
-            case "2":
-                terminal.ListGates();
-                break;
-            case "3":
-                // AssignBoardingGate();
-                break;
-            case "4":
-                CreateFlight(allFlightsDict);
-                break;
-            case "5":
-                BulkAssignBoardingGates(allFlightsDict, terminal);
-                break;
-            case "6":
-                CalculateTotalFeesPerAirline(allFlightsDict);
-                break;
-            case "7":
-                DisplayFlightSchedule(allFlightsDict);
-                break;
-            case "0":
-                Console.WriteLine("Now exiting...");
-                Environment.Exit(0);
-                break;
-            default:
-                Console.WriteLine("Invalid option. Please try again.");
-                break;
-        }
+    switch (Console.ReadLine())
+    {
+        case "1":
+            DisplayFlightSchedule();
+            break;
+        case "2":
+            terminal.ListGates();
+            break;
+        case "3":
+            AssignBoardingGate();
+            break;
+        case "4":
+            CreateFlight();
+            break;
+        case "5":
+            DisplayFlightSchedule();
+            break;
+        case "6":
+
+            break;
+        case "7":
+            BulkAssignBoardingGates();
+            break;
+        case "8":
+            CalculateTotalFeesPerAirline();
+            break;
+        case "0":
+            Console.WriteLine("Now exiting...");
+            Environment.Exit(0);
+            break;
+        default:
+            Console.WriteLine("Invalid option. Please try again.");
+            break;
     }
 }
 
@@ -122,7 +124,39 @@ static void ListFlights(Dictionary<string, Flight> allFlightsDict) {
 }
 
 // Feature 4
-static void CreateFlight(Dictionary<string, Flight> allFlightsDict) {
+//Should be under terminal, in classes
+    
+// Feature 5
+static void AssignBoardingGate()
+{
+    Console.Write("Enter Flight Number: ");
+    string flightNumber = Console.ReadLine() ?? "";
+
+    if (!allFlightsDict.TryGetValue(flightNumber, out var flight))
+    {
+        Console.WriteLine("Flight not found.");
+        return;
+    }
+
+    BoardingGate? assignedGate = terminal.GetUnassignedGate(g =>
+        (flight is DDJBFlight && g.SupportsDDJB) ||
+        (flight is CFFTFlight && g.SupportsCFFT) ||
+        (flight is LWTTFlight && g.SupportsLWTT) ||
+        (flight is NORMFlight));
+
+    if (assignedGate != null)
+    {
+        assignedGate.AssignFlight(flight.flightNumber);
+        Console.WriteLine($"Assigned {flight.flightNumber} to Gate {assignedGate.GateName}");
+    }
+    else
+    {
+        Console.WriteLine("No available gate for this flight.");
+    }
+}
+// Feature 6
+static void CreateFlight()
+{
     Console.Write("Enter Flight Number: ");
     string flightNumber = Console.ReadLine() ?? "";
     Console.Write("Enter Origin: ");
@@ -134,7 +168,8 @@ static void CreateFlight(Dictionary<string, Flight> allFlightsDict) {
     Console.Write("Enter Special Request Code (CFFT/DDJB/LWTT/None): ");
     string specialCode = Console.ReadLine() ?? "None";
 
-    Flight flight = specialCode switch {
+    Flight flight = specialCode switch
+    {
         "LWTT" => new LWTTFlight(flightNumber, origin, destination, expectedTime, "On Time"),
         "DDJB" => new DDJBFlight(flightNumber, origin, destination, expectedTime, "On Time"),
         "CFFT" => new CFFTFlight(flightNumber, origin, destination, expectedTime, "On Time"),
@@ -144,10 +179,6 @@ static void CreateFlight(Dictionary<string, Flight> allFlightsDict) {
     allFlightsDict[flightNumber] = flight;
     Console.WriteLine($"Flight {flightNumber} has been added!");
 }
-
-// Feature 5
-
-// Feature 6
 
 // Feature 7
 static void DisplayFlightSchedule(Dictionary<string, Flight> allFlightsDict) {

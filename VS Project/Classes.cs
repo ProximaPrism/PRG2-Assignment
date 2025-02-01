@@ -208,11 +208,20 @@ class Terminal {
         return null;
     }
 
-    public void ListGates() {
-        foreach (var gate in Gates.Values) {
-            Console.WriteLine(gate);
-        }
+    public void ListGates()
+{
+    Console.WriteLine("{0,-10} {1,-15} {2,-15} {3,-15} {4,-20}", "Gate", "Supports DDJB", "Supports CFFT", "Supports LWTT", "Assigned Flight");
+
+    foreach (var gate in Gates.Values)
+    {
+        Console.WriteLine("{0,-10} {1,-15} {2,-15} {3,-15} {4,-20}",
+            gate.GateName,
+            gate.SupportsDDJB ? "Yes" : "No",
+            gate.SupportsCFFT ? "Yes" : "No",
+            gate.SupportsLWTT ? "Yes" : "No",
+            gate.AssignedFlightNumber ?? "None");
     }
+}
     public void LoadGatesFromFile(string filePath) {
         using StreamReader sr = new StreamReader(filePath);
         string? line;

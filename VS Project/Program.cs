@@ -202,6 +202,7 @@ static void Main(string[] args)
         Console.WriteLine("7. Display Flight Schedule");
         Console.WriteLine("0. Exit");
         Console.Write("Please select your option: ");
+        Console.WriteLine("=============================================");
 
         switch (Console.ReadLine())
         {

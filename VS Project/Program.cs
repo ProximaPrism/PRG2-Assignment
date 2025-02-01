@@ -29,7 +29,7 @@ static void Main(string[] args) {
 
         switch (Console.ReadLine()) {
             case "1":
-                DisplayFlightSchedule(allFlightsDict);
+                ListFlights(allFlightsDict);
                 break;
             case "2":
                 terminal.ListGates();

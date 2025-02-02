@@ -61,7 +61,7 @@ static void Main(string[] args) {
                 DisplayFlightSchedule(allFlightsDict, allAirlinesDict, terminal);
                 break;
             case "6":
-                ModifyFlightDetails(allAirlinesDict);
+                ModifyFlightDetails(allAirlinesDict, AllFlightsDict);
                 break;
             case "7":
                 BulkAssignBoardingGates(allFlightsDict, terminal);
@@ -388,29 +388,34 @@ static Airline? HandleAirlineCode(Dictionary<string, Airline> allAirlinesDict) {
 
 
 // Feature 8
-static void ModifyFlightDetails(Dictionary<string, Airline> allAirlinesDict) {
+static void ModifyFlightDetails(Dictionary<string, Airline> allAirlinesDict, Dictionary<string, Flight> allFlightsDict)
+{
     Console.WriteLine("Available Airlines:");
-    foreach (var airline in allAirlinesDict.Values) {
+    foreach (var airline in allAirlinesDict.Values)
+    {
         Console.WriteLine($"{airline.code}: {airline.name}");
     }
 
     Console.Write("Enter Airline Code: ");
     string airlineCode = Console.ReadLine() ?? "";
 
-    if (string.IsNullOrEmpty(airlineCode) || !allAirlinesDict.TryGetValue(airlineCode, out var selectedAirline)) {
+    if (string.IsNullOrEmpty(airlineCode) || !allAirlinesDict.TryGetValue(airlineCode, out var selectedAirline))
+    {
         Console.WriteLine("Invalid Airline Code.");
         return;
     }
 
     Console.WriteLine($"Flights for {selectedAirline.name}:");
-    foreach (var flight in selectedAirline.flights.Values) {
+    foreach (var flight in selectedAirline.flights.Values)
+    {
         Console.WriteLine($"{flight.flightNumber}: {flight.origin} -> {flight.destination}");
     }
 
     Console.Write("Enter Flight Number to modify or delete: ");
     string flightNumber = Console.ReadLine() ?? "";
 
-    if (string.IsNullOrEmpty(flightNumber) || !selectedAirline.flights.TryGetValue(flightNumber, out var selectedFlight)) {
+    if (string.IsNullOrEmpty(flightNumber) || !selectedAirline.flights.TryGetValue(flightNumber, out var selectedFlight))
+    {
         Console.WriteLine("Invalid Flight Number.");
         return;
     }
@@ -419,17 +424,20 @@ static void ModifyFlightDetails(Dictionary<string, Airline> allAirlinesDict) {
     Console.Write("Choose an option: ");
     string? option = Console.ReadLine();
 
-    if (option == "1") {
+    if (option == "1")
+    {
         Console.WriteLine("What would you like to modify?");
         Console.WriteLine("1. Origin\n2. Destination\n3. Expected Time\n4. Status\n5. Special Request Code");
         Console.Write("Choose an option: ");
         string? modifyOption = Console.ReadLine();
 
-        switch (modifyOption) {
+        switch (modifyOption)
+        {
             case "1":
                 Console.Write("Enter new Origin: ");
                 string inputOrigin = Console.ReadLine() ?? "";
-                if (string.IsNullOrEmpty(inputOrigin)) {
+                if (string.IsNullOrEmpty(inputOrigin))
+                {
                     Console.WriteLine("Invalid origin location");
                     break;
                 }
@@ -438,7 +446,8 @@ static void ModifyFlightDetails(Dictionary<string, Airline> allAirlinesDict) {
             case "2":
                 Console.Write("Enter new Destination: ");
                 string inputDest = Console.ReadLine() ?? "";
-                if (string.IsNullOrEmpty(inputDest)) {
+                if (string.IsNullOrEmpty(inputDest))
+                {
                     Console.WriteLine("Invalid destination location");
                     break;
                 }
@@ -446,12 +455,15 @@ static void ModifyFlightDetails(Dictionary<string, Airline> allAirlinesDict) {
                 break;
             case "3":
                 Console.Write("Enter new Expected Time (dd/mm/yyyy hh:mm): ");
-                while (true) {
-                    try {
+                while (true)
+                {
+                    try
+                    {
                         selectedFlight.expectedTime = DateTime.Parse(Console.ReadLine() ?? "");
                         break;
                     }
-                    catch (FormatException) {
+                    catch (FormatException)
+                    {
                         Console.WriteLine("Invalid expected time value");
                     }
                 }
@@ -461,7 +473,8 @@ static void ModifyFlightDetails(Dictionary<string, Airline> allAirlinesDict) {
                 string inputStatus = Console.ReadLine() ?? "";
                 if (char.ToUpper(inputStatus[0]) + inputStatus[1] + inputStatus[2] + char.ToUpper(inputStatus[3]) + inputStatus.Substring(4) != "On Time" ||
                     char.ToUpper(inputStatus[0]) + inputStatus.Substring(1) != "Boarding" ||
-                    char.ToUpper(inputStatus[0]) + inputStatus.Substring(1) != "Delayed") {
+                    char.ToUpper(inputStatus[0]) + inputStatus.Substring(1) != "Delayed")
+                {
                     Console.WriteLine("Invalid status");
                 }
                 selectedFlight.status = inputStatus;
@@ -469,23 +482,26 @@ static void ModifyFlightDetails(Dictionary<string, Airline> allAirlinesDict) {
             case "5":
                 Console.Write("Enter new Special Request Code (CFFT/DDJB/LWTT/None): ");
                 string inputCode = Console.ReadLine() ?? "";
-                if (inputCode.ToUpper() != "CFFT" || inputCode.ToUpper() != "DDJB" || inputCode.ToUpper() != "LWTT" || !string.IsNullOrEmpty(inputCode)) {
+                if (inputCode.ToUpper() != "CFFT" || inputCode.ToUpper() != "DDJB" || inputCode.ToUpper() != "LWTT" || !string.IsNullOrEmpty(inputCode))
+                {
                     Console.WriteLine("Invalid Special request code");
                 }
-                switch (inputCode) {
+                switch (inputCode)
+                {
                     case "CFFT":
-                        selectedFlight = (CFFTFlight) selectedFlight;
+                        selectedFlight = (CFFTFlight)selectedFlight;
                         break;
                     case "DDJB":
-                        selectedFlight = (DDJBFlight) selectedFlight;
+                        selectedFlight = (DDJBFlight)selectedFlight;
                         break;
                     case "LWTT":
-                        selectedFlight = (LWTTFlight) selectedFlight;
+                        selectedFlight = (LWTTFlight)selectedFlight;
                         break;
                     default:
-                        selectedFlight = (NORMFlight) selectedFlight;
+                        selectedFlight = (NORMFlight)selectedFlight;
                         break;
                 }
+                UpdateFlightsCSV(allFlightsDict);
                 break;
             default:
                 Console.WriteLine("Invalid option.");
@@ -494,30 +510,41 @@ static void ModifyFlightDetails(Dictionary<string, Airline> allAirlinesDict) {
 
         Console.WriteLine("Flight details updated successfully.");
     }
-    else if (option == "2") {
+    else if (option == "2")
+    {
         Console.Write("Are you sure you want to delete this flight? (Y/N): ");
-        string inputOption = Console.ReadLine() ?? "";
-        while (true) {
-            if (inputOption.ToUpper() == "Y") {
-                if (selectedAirline.RemoveFlight(selectedFlight)) {
-                    Console.WriteLine("Flight deleted successfully.");
-                    break;
-                }
-                Console.WriteLine("Deletion unsuccessful. Flight not found");
-                break;
-            }
-            else if (inputOption.ToUpper() == "N") {
-                Console.WriteLine("Deletion cancelled");
-                break;
-            }
-            else {
-                Console.WriteLine("Invalid option");
-            }
+        string confirmDelete = Console.ReadLine()?.Trim().ToUpper() ?? "N";
+
+        if (confirmDelete == "Y")
+        {
+            selectedAirline.RemoveFlight(selectedFlight);
+            allFlightsDict.Remove(flightNumber);
+            UpdateFlightsCSV(allFlightsDict);
+            Console.WriteLine($"Flight {flightNumber} deleted successfully.");
+        }
+        else
+        {
+            Console.WriteLine("Deletion cancelled.");
         }
     }
-    else {
+    else
+    {
         Console.WriteLine("Invalid option.");
     }
+}
+//Method to save info  to csv file
+static void UpdateFlightsCSV(Dictionary<string, Flight> allFlightsDict)
+{
+    string filePath = "flights.csv";
+    using (StreamWriter writer = new StreamWriter(filePath))
+    {
+        writer.WriteLine("FlightNumber,Origin,Destination,ExpectedTime,Status,SpecialRequestCode"); 
+        foreach (var flight in allFlightsDict.Values)
+        {
+            writer.WriteLine($"{flight.flightNumber},{flight.origin},{flight.destination},{flight.expectedTime:dd/MM/yyyy HH:mm},{flight.status},{flight.SpecialRequestCode ?? "None"}");
+        }
+    }
+    Console.WriteLine("\nFlight records updated in flights.csv!");
 }
 
 // Feature 9

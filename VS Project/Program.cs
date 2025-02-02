@@ -61,7 +61,7 @@ static void Main(string[] args) {
                 DisplayFlightSchedule(allFlightsDict, allAirlinesDict, terminal);
                 break;
             case "6":
-                ModifyFlightDetails(allAirlinesDict, AllFlightsDict);
+                ModifyFlightDetails(allAirlinesDict, allFlightsDict);
                 break;
             case "7":
                 BulkAssignBoardingGates(allFlightsDict, terminal);

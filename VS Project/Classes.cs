@@ -5,13 +5,16 @@ abstract class Flight : IComparable<Flight> {
     public string destination { get; set; }
     public DateTime expectedTime { get; set; }
     public string status { get; set; }
+    public string? SpecialRequestCode { get; set; }
 
-    public Flight(string flightNumber, string origin, string destination, DateTime expectedTime, string status) {
+    
+    public Flight(string flightNumber, string origin, string destination, DateTime expectedTime, string status, string? specialRequestCode = null) {
         this.flightNumber = flightNumber;
         this.origin = origin;
         this.destination = destination;
         this.expectedTime = expectedTime;
         this.status = status;
+        this.SpecialRequestCode = specialRequestCode;
     }
 
     public virtual double CalculateFees() {
@@ -43,7 +46,7 @@ abstract class Flight : IComparable<Flight> {
 // Inherited flights
 class NORMFlight : Flight {
     public NORMFlight(string flightNumber, string origin, string destination, DateTime expectedTime, string status)
-        : base(flightNumber, origin, destination, expectedTime, status) { }
+        : base(flightNumber, origin, destination, expectedTime, status, null) { }
 
     public override double CalculateFees() {
         double baseCost = base.CalculateFees();
@@ -59,7 +62,7 @@ class LWTTFlight : Flight {
     double requestFee { get; set; }
 
     public LWTTFlight(string flightNumber, string origin, string destination, DateTime expectedTime, string status)
-        : base(flightNumber, origin, destination, expectedTime, status) {
+        : base(flightNumber, origin, destination, expectedTime, status, "LWTT") {
         requestFee = 500;
     }
 
@@ -77,7 +80,7 @@ class DDJBFlight : Flight {
     double requestFee { get; set; }
 
     public DDJBFlight(string flightNumber, string origin, string destination, DateTime expectedTime, string status)
-        : base(flightNumber, origin, destination, expectedTime, status) {
+        : base(flightNumber, origin, destination, expectedTime, status, "DDJB") {
         requestFee = 300;
     }
 
@@ -94,8 +97,8 @@ class DDJBFlight : Flight {
 class CFFTFlight : Flight {
     double requestFee { get; set; }
 
-    public CFFTFlight(string flightNumber, string origin, string destination, DateTime expectedTime, string status)
-        : base(flightNumber, origin, destination, expectedTime, status) {
+    public DDJBFlight(string flightNumber, string origin, string destination, DateTime expectedTime, string status)
+        : base(flightNumber, origin, destination, expectedTime, status, "DDJB") {
         requestFee = 150;
     }
 
@@ -182,8 +185,10 @@ class BoardingGate {
     public bool SupportsDDJB { get; set; }
     public bool SupportsCFFT { get; set; }
     public bool SupportsLWTT { get; set; }
-    public string? AssignedFlightNumber { get; set; } // Null if unassigned
+    public string? AssignedFlightNumber { get; set; }
 
+    public bool IsAssigned => AssignedFlightNumber != null;
+    
     public BoardingGate(string gateName, bool supportsDDJB, bool supportsCFFT, bool supportsLWTT) {
         GateName = gateName;
         SupportsDDJB = supportsDDJB;

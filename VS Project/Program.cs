@@ -211,7 +211,7 @@ static void AssignBoardingGate(Dictionary<string, Flight> allFlightsDict, Termin
     if (response == "Y")
     {
         Console.Write("Enter new status (Delayed, Boarding, On Time): ");
-        string newStatus = Console.ReadLine()?.Trim();
+        string? newStatus = Console.ReadLine()?.Trim();
 
         if (newStatus == "Delayed" || newStatus == "Boarding" || newStatus == "On Time")
         {

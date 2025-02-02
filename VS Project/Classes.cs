@@ -97,7 +97,7 @@ class DDJBFlight : Flight {
 class CFFTFlight : Flight {
     double requestFee { get; set; }
 
-    public DDJBFlight(string flightNumber, string origin, string destination, DateTime expectedTime, string status)
+    public CFFTFlight(string flightNumber, string origin, string destination, DateTime expectedTime, string status)
         : base(flightNumber, origin, destination, expectedTime, status, "DDJB") {
         requestFee = 150;
     }

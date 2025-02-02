@@ -244,10 +244,10 @@ static void CreateFlight(Dictionary<string, Flight> allFlightsDict)
 {
     while (true)
     {
-        Console.Write("Enter Flight Number: ");
         string flightNumber;
         while (true)
         {
+            Console.Write("Enter Flight Number: ");
             flightNumber = Console.ReadLine()?.Trim() ?? "";
             if (!string.IsNullOrEmpty(flightNumber) && !allFlightsDict.ContainsKey(flightNumber))
                 break;
@@ -255,10 +255,10 @@ static void CreateFlight(Dictionary<string, Flight> allFlightsDict)
             Console.WriteLine("Invalid or duplicate Flight Number. Please enter a unique flight number.");
         }
 
-        Console.Write("Enter Origin: ");
         string origin;
         while (true)
-        {
+        {  
+            Console.Write("Enter Origin: ");
             origin = Console.ReadLine()?.Trim() ?? "";
             if (!string.IsNullOrEmpty(origin))
                 break;
@@ -266,10 +266,10 @@ static void CreateFlight(Dictionary<string, Flight> allFlightsDict)
             Console.WriteLine("Invalid origin location. Please try again.");
         }
 
-        Console.Write("Enter Destination: ");
         string destination;
         while (true)
         {
+            Console.Write("Enter Destination: ");
             destination = Console.ReadLine()?.Trim() ?? "";
             if (!string.IsNullOrEmpty(destination))
                 break;
@@ -277,20 +277,19 @@ static void CreateFlight(Dictionary<string, Flight> allFlightsDict)
             Console.WriteLine("Invalid destination location. Please try again.");
         }
 
-        Console.Write("Enter Expected Departure/Arrival Time (dd/MM/yyyy HH:mm): ");
         DateTime expectedTime;
         while (true)
         {
+            Console.Write("Enter Expected Departure/Arrival Time (dd/MM/yyyy HH:mm): ");
             if (DateTime.TryParse(Console.ReadLine(), out expectedTime))
                 break;
 
             Console.WriteLine("Invalid date format. Please enter again (dd/MM/yyyy HH:mm).");
         }
-
-        Console.Write("Enter Special Request Code (CFFT/DDJB/LWTT/None): ");
         string inputCode;
         while (true)
         {
+            Console.Write("Enter Special Request Code (CFFT/DDJB/LWTT/None): ");
             inputCode = Console.ReadLine()?.Trim().ToUpper() ?? "NONE";
             if (inputCode == "CFFT" || inputCode == "DDJB" || inputCode == "LWTT" || inputCode == "NONE")
                 break;

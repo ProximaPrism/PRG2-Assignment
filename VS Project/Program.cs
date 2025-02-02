@@ -162,28 +162,81 @@ static void ListFlights(Dictionary<string, Flight> allFlightsDict, Dictionary<st
 //Should be under terminal, in classes
 
 // Feature 5
-static void AssignBoardingGate(Dictionary<string, Flight> allFlightsDict, Terminal terminal) {
+static void AssignBoardingGate(Dictionary<string, Flight> allFlightsDict, Terminal terminal)
+{
     Console.Write("Enter Flight Number: ");
     string flightNumber = Console.ReadLine() ?? "";
 
-    if (!allFlightsDict.TryGetValue(flightNumber, out var flight)) {
+    if (!allFlightsDict.TryGetValue(flightNumber, out var flight))
+    {
         Console.WriteLine("Flight not found.");
         return;
     }
 
-    BoardingGate? assignedGate = terminal.GetUnassignedGate(g =>
-        flight is DDJBFlight && g.SupportsDDJB ||
-        flight is CFFTFlight && g.SupportsCFFT ||
-        flight is LWTTFlight && g.SupportsLWTT ||
-        flight is NORMFlight);
+    Console.WriteLine($"Flight Number: {flight.flightNumber}");
+    Console.WriteLine($"Special Request Code: {flight.SpecialRequestCode ?? "None"}");
+    Console.WriteLine($"Current Status: {flight.status}");
 
-    if (assignedGate != null) {
-        assignedGate.AssignFlight(flight.flightNumber);
-        Console.WriteLine($"Assigned {flight.flightNumber} to Gate {assignedGate.GateName}");
+    BoardingGate? assignedGate = null;
+
+    while (assignedGate == null)
+    {
+        Console.Write("Enter Boarding Gate: ");
+        string gateName = Console.ReadLine() ?? "";
+
+        if (!terminal.Gates.TryGetValue(gateName, out var selectedGate))
+        {
+            Console.WriteLine("Invalid Gate. Please try again.");
+            continue;
+        }
+
+        if (selectedGate.IsAssigned)
+        {
+            Console.WriteLine("Gate is already assigned to another flight. Choose another.");
+            continue;
+        }
+        if (!GateSupportsFlight(selectedGate, flight))
+        {
+            Console.WriteLine("This gate does not support the flight type. Please select another gate.");
+            continue;
+        }
+
+        assignedGate = selectedGate;
     }
-    else {
-        Console.WriteLine("No available gate for this flight.");
+
+    assignedGate.AssignFlight(flight.flightNumber);
+    Console.WriteLine($"Successfully assigned {flight.flightNumber} to Gate {assignedGate.GateName}");
+    Console.Write("Would you like to update the flight status? (Y/N): ");
+    string response = Console.ReadLine()?.Trim().ToUpper() ?? "N";
+    if (response == "Y")
+    {
+        Console.Write("Enter new status (Delayed, Boarding, On Time): ");
+        string newStatus = Console.ReadLine()?.Trim();
+
+        if (newStatus == "Delayed" || newStatus == "Boarding" || newStatus == "On Time")
+        {
+            flight.status = newStatus;
+        }
+        else
+        {
+            Console.WriteLine("Invalid status. Setting to default: On Time.");
+            flight.status = "On Time";
+        }
     }
+    else
+    {
+        flight.status = "On Time";
+    }
+
+    Console.WriteLine($"Flight {flight.flightNumber} is now marked as '{flight.status}' at Gate {assignedGate.GateName}");
+}
+// Method to check if a gate supports a flight type
+static bool GateSupportsFlight(BoardingGate gate, Flight flight)
+{
+    return (flight.SpecialRequestCode == "DDJB" && gate.SupportsDDJB) ||
+           (flight.SpecialRequestCode == "CFFT" && gate.SupportsCFFT) ||
+           (flight.SpecialRequestCode == "LWTT" && gate.SupportsLWTT) ||
+           (flight.SpecialRequestCode == null); // This is for NORM flights
 }
 
 // Feature 6

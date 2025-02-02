@@ -310,7 +310,7 @@ static void CreateFlight(Dictionary<string, Flight> allFlightsDict)
         Console.WriteLine($"\nFlight {flightNumber} has been successfully added!");
         Console.Write("\nWould you like to add another flight? (Y/N): ");
         string response = Console.ReadLine()?.Trim().ToUpper() ?? "N";
-        if (response = "N")
+        if (response != "N")
         {
             Console.WriteLine("Returning to the main menu...");
             break;
